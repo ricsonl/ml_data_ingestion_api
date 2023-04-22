@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DECIMAL, String
+from sqlalchemy import Column, Integer, DECIMAL, String, DateTime
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -8,7 +8,7 @@ class TrainData(Base):
 
     key=Column(String, primary_key=True)
     fare_amount=Column(DECIMAL(19,4))
-    pickup_datetime=Column(String)
+    pickup_datetime=Column(DateTime)
     pickup_latitude=Column(DECIMAL(8,6))
     pickup_longitude=Column(DECIMAL(9,6))
     dropoff_latitude=Column(DECIMAL(8,6))
@@ -19,7 +19,7 @@ class TestData(Base):
     __tablename__ = 'test_data'
 
     key=Column(String, primary_key=True)
-    pickup_datetime=Column(String)
+    pickup_datetime=Column(DateTime)
     pickup_latitude=Column(DECIMAL(8,6))
     pickup_longitude=Column(DECIMAL(9,6))
     dropoff_latitude=Column(DECIMAL(8,6))

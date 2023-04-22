@@ -10,7 +10,7 @@ class TrainDataService:
         async with async_session() as session:
             _train_data = TrainData(key=train_data.key,
                                     fare_amount=train_data.fare_amount,
-                                    pickup_datetime=train_data.pickup_datetime,
+                                    pickup_datetime=train_data.pickup_datetime.replace(tzinfo=None),
                                     pickup_latitude=train_data.pickup_latitude,
                                     pickup_longitude=train_data.pickup_longitude,
                                     dropoff_latitude=train_data.dropoff_latitude,
@@ -37,7 +37,7 @@ class TrainDataService:
             await session.execute(update(TrainData).where(TrainData.key==train_data.key)
                                                    .values(key=train_data.key,
                                                            fare_amount=train_data.fare_amount,
-                                                           pickup_datetime=train_data.pickup_datetime,
+                                                           pickup_datetime=train_data.pickup_datetime.replace(tzinfo=None),
                                                            pickup_latitude=train_data.pickup_latitude,
                                                            pickup_longitude=train_data.pickup_longitude,
                                                            dropoff_latitude=train_data.dropoff_latitude,
@@ -56,7 +56,7 @@ class TestDataService:
     async def create_test_data(test_data: TestDataSchema) -> None:
         async with async_session() as session:
             _test_data = TestData(key=test_data.key,
-                                  pickup_datetime=test_data.pickup_datetime,
+                                  pickup_datetime=test_data.pickup_datetime.replace(tzinfo=None),
                                   pickup_latitude=test_data.pickup_latitude,
                                   pickup_longitude=test_data.pickup_longitude,
                                   dropoff_latitude=test_data.dropoff_latitude,
@@ -82,7 +82,7 @@ class TestDataService:
         async with async_session() as session:
             await session.execute(update(TestData).where(TestData.key==test_data.key)
                                                   .values(key=test_data.key,
-                                                          pickup_datetime=test_data.pickup_datetime,
+                                                          pickup_datetime=test_data.pickup_datetime.replace(tzinfo=None),
                                                           pickup_latitude=test_data.pickup_latitude,
                                                           pickup_longitude=test_data.pickup_longitude,
                                                           dropoff_latitude=test_data.dropoff_latitude,

@@ -1,5 +1,6 @@
 from typing import Optional, Generic, TypeVar
 from decimal import Decimal
+from datetime import datetime
 from pydantic import BaseModel, Field
 from pydantic.generics import GenericModel
 
@@ -8,7 +9,7 @@ T = TypeVar('T')
 class TrainDataSchema(BaseModel):
     key: Optional[str]=None
     fare_amount: Optional[Decimal]=None
-    pickup_datetime: Optional[str]=None
+    pickup_datetime: Optional[datetime]=None
     pickup_latitude: Optional[Decimal]=None
     pickup_longitude: Optional[Decimal]=None
     dropoff_latitude: Optional[Decimal]=None
@@ -25,7 +26,7 @@ class RequestTrainData(BaseModel):
 
 class TestDataSchema(BaseModel):
     key: Optional[str]=None
-    pickup_datetime: Optional[str]=None
+    pickup_datetime: Optional[datetime]=None
     pickup_latitude: Optional[Decimal]=None
     pickup_longitude: Optional[Decimal]=None
     dropoff_latitude: Optional[Decimal]=None

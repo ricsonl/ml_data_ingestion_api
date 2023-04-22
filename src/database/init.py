@@ -4,7 +4,6 @@ from database.models import Base
 
 async def create_database():
     async with engine.begin() as conn:
-        print(conn)
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
