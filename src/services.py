@@ -4,6 +4,7 @@ from database.connection import async_session
 from schemas import RawDataSchema
 from sqlalchemy import delete, update
 from sqlalchemy.future import select
+import pandas as pd
 
 class RawDataService:
     async def create_data(table: str, data: RawDataSchema) -> None:
@@ -107,6 +108,21 @@ class RawDataService:
                 await session.execute(delete(TrainData))
             elif table == 'test':
                 await session.execute(delete(TestData))
+            else:
+                raise Exception("Raw data table must be 'train' or 'test'")
+            await session.commit()
+
+
+    async def load_data(table: str, path: str) -> None:
+        _df = pd.read_parquet(path)
+        _df['pickup_datetime'] =  pd.to_datetime(_df['pickup_datetime'], infer_datetime_format=True)
+        _df['pickup_datetime'] =  _df['pickup_datetime'].dt.tz_localize(None)
+        _dict = _df.to_dict(orient='records')
+        async with async_session() as session:
+            if table == 'train':
+                await session.execute(TrainData.__table__.insert(), _dict)
+            elif table == 'test':
+                await session.execute(TestData.__table__.insert(), _dict)
             else:
                 raise Exception("Raw data table must be 'train' or 'test'")
             await session.commit()

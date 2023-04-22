@@ -21,7 +21,11 @@ class RawDataSchema(BaseModel):
 
 
 class RequestRawData(BaseModel):
-    parameter: RawDataSchema = Field(...)
+    data: RawDataSchema = Field(...)
+
+
+class RequestRawDataMassive(BaseModel):
+    path: str
 
 
 class Response(GenericModel, Generic[T]):

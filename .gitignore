@@ -2,3 +2,6 @@ venv/
 *.env
 **/__pycache__
 **/db_data
+**/csv_data
+**/parquet_data
+csv_to_parquet.py
