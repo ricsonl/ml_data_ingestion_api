@@ -1,97 +1,89 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from database.models import TrainData, TestData
 from database.connection import async_session
-from schemas import TrainDataSchema, TestDataSchema
+from schemas import RawDataSchema
 from sqlalchemy import delete, update
 from sqlalchemy.future import select
 
-class TrainDataService:
-    async def create_train_data(train_data: TrainDataSchema) -> None:
+class RawDataService:
+    async def create_data(table: str, data: RawDataSchema) -> None:
         async with async_session() as session:
-            _train_data = TrainData(key=train_data.key,
-                                    fare_amount=train_data.fare_amount,
-                                    pickup_datetime=train_data.pickup_datetime.replace(tzinfo=None),
-                                    pickup_latitude=train_data.pickup_latitude,
-                                    pickup_longitude=train_data.pickup_longitude,
-                                    dropoff_latitude=train_data.dropoff_latitude,
-                                    dropoff_longitude=train_data.dropoff_longitude,
-                                    passenger_count=train_data.passenger_count)
-            session.add(_train_data)
+            if table == 'train':
+                _data = TrainData(key=data.key,
+                                fare_amount=data.fare_amount,
+                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                pickup_latitude=data.pickup_latitude,
+                                pickup_longitude=data.pickup_longitude,
+                                dropoff_latitude=data.dropoff_latitude,
+                                dropoff_longitude=data.dropoff_longitude,
+                                passenger_count=data.passenger_count)
+            elif table == 'test':
+                _data = TestData(key=data.key,
+                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                pickup_latitude=data.pickup_latitude,
+                                pickup_longitude=data.pickup_longitude,
+                                dropoff_latitude=data.dropoff_latitude,
+                                dropoff_longitude=data.dropoff_longitude,
+                                passenger_count=data.passenger_count)
+            else:
+                raise Exception("Raw data table must be 'train' or 'test'")
+            session.add(_data)
             await session.commit()
-    
 
-    async def list_train_data() -> Optional[List[TrainData]]:
+    async def list_data(table: str) -> Union[Optional[List[TrainData]], Optional[List[TestData]]]:
         async with async_session() as session:
-            result = await session.execute(select(TrainData))
+            if table == 'train':
+                result = await session.execute(select(TrainData))
+            elif table == 'test':
+                result = await session.execute(select(TestData))
+            else:
+                raise Exception("Raw data table must be 'train' or 'test'")
             return result.scalars().all()
         
 
-    async def get_train_data(key: str) -> Optional[TrainData]:
+    async def get_data(table: str, key: str) -> Union[Optional[TrainData], Optional[TestData]]:
         async with async_session() as session:
-            result = await session.execute(select(TrainData).where(TrainData.key==key))
+            if table == 'train':
+                result = await session.execute(select(TrainData).where(TrainData.key==key))
+            elif table == 'test':
+                result = await session.execute(select(TestData).where(TestData.key==key))
+            else:
+                raise Exception("Raw data table must be 'train' or 'test'")
             return result.scalars().first()
     
 
-    async def update_train_data(train_data: TrainDataSchema) -> None:
+    async def update_data(table: str, data: RawDataSchema) -> None:
         async with async_session() as session:
-            await session.execute(update(TrainData).where(TrainData.key==train_data.key)
-                                                   .values(key=train_data.key,
-                                                           fare_amount=train_data.fare_amount,
-                                                           pickup_datetime=train_data.pickup_datetime.replace(tzinfo=None),
-                                                           pickup_latitude=train_data.pickup_latitude,
-                                                           pickup_longitude=train_data.pickup_longitude,
-                                                           dropoff_latitude=train_data.dropoff_latitude,
-                                                           dropoff_longitude=train_data.dropoff_longitude,
-                                                           passenger_count=train_data.passenger_count))
+            if table == 'train':
+                await session.execute(update(TrainData).where(TrainData.key==data.key)
+                                                        .values(key=data.key,
+                                                                fare_amount=data.fare_amount,
+                                                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                                                pickup_latitude=data.pickup_latitude,
+                                                                pickup_longitude=data.pickup_longitude,
+                                                                dropoff_latitude=data.dropoff_latitude,
+                                                                dropoff_longitude=data.dropoff_longitude,
+                                                                passenger_count=data.passenger_count))
+            elif table == 'test':
+                await session.execute(update(TestData).where(TestData.key==data.key)
+                                                        .values(key=data.key,
+                                                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                                                pickup_latitude=data.pickup_latitude,
+                                                                pickup_longitude=data.pickup_longitude,
+                                                                dropoff_latitude=data.dropoff_latitude,
+                                                                dropoff_longitude=data.dropoff_longitude,
+                                                                passenger_count=data.passenger_count))
+            else:
+                raise Exception("Raw data table must be 'train' or 'test'")            
             await session.commit()
 
 
-    async def delete_train_data(key: str) -> None:
+    async def delete_data(table: str, key: str) -> None:
         async with async_session() as session:
-            await session.execute(delete(TrainData).where(TrainData.key==key))
-            await session.commit()
-
-
-class TestDataService:
-    async def create_test_data(test_data: TestDataSchema) -> None:
-        async with async_session() as session:
-            _test_data = TestData(key=test_data.key,
-                                  pickup_datetime=test_data.pickup_datetime.replace(tzinfo=None),
-                                  pickup_latitude=test_data.pickup_latitude,
-                                  pickup_longitude=test_data.pickup_longitude,
-                                  dropoff_latitude=test_data.dropoff_latitude,
-                                  dropoff_longitude=test_data.dropoff_longitude,
-                                  passenger_count=test_data.passenger_count)
-            session.add(_test_data)
-            await session.commit()
-    
-
-    async def list_test_data() -> Optional[List[TestData]]:
-        async with async_session() as session:
-            result = await session.execute(select(TestData))
-            return result.scalars().all()
-        
-
-    async def get_test_data(key: str) -> Optional[TestData]:
-        async with async_session() as session:
-            result = await session.execute(select(TestData).where(TestData.key==key))
-            return result.scalars().first()
-    
-
-    async def update_test_data(test_data: TestDataSchema) -> None:
-        async with async_session() as session:
-            await session.execute(update(TestData).where(TestData.key==test_data.key)
-                                                  .values(key=test_data.key,
-                                                          pickup_datetime=test_data.pickup_datetime.replace(tzinfo=None),
-                                                          pickup_latitude=test_data.pickup_latitude,
-                                                          pickup_longitude=test_data.pickup_longitude,
-                                                          dropoff_latitude=test_data.dropoff_latitude,
-                                                          dropoff_longitude=test_data.dropoff_longitude,
-                                                          passenger_count=test_data.passenger_count))
-            await session.commit()
-
-
-    async def delete_test_data(key: str) -> None:
-        async with async_session() as session:
-            await session.execute(delete(TestData).where(TestData.key==key))
+            if table == 'train':
+                await session.execute(delete(TrainData).where(TrainData.key==key))
+            elif table == 'test':
+                await session.execute(delete(TestData).where(TestData.key==key))
+            else:
+                raise Exception("Raw data table must be 'train' or 'test'")
             await session.commit()

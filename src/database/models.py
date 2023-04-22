@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 class TrainData(Base):
-    __tablename__ = 'train_data'
+    __tablename__ = 'train'
 
     key=Column(String, primary_key=True)
     fare_amount=Column(DECIMAL(19,4))
@@ -16,7 +16,7 @@ class TrainData(Base):
     passenger_count=Column(Integer)
 
 class TestData(Base):
-    __tablename__ = 'test_data'
+    __tablename__ = 'test'
 
     key=Column(String, primary_key=True)
     pickup_datetime=Column(DateTime)

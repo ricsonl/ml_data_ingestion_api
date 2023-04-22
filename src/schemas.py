@@ -6,7 +6,7 @@ from pydantic.generics import GenericModel
 
 T = TypeVar('T')
 
-class TrainDataSchema(BaseModel):
+class RawDataSchema(BaseModel):
     key: Optional[str]=None
     fare_amount: Optional[Decimal]=None
     pickup_datetime: Optional[datetime]=None
@@ -20,25 +20,8 @@ class TrainDataSchema(BaseModel):
         orm_mode = True
 
 
-class RequestTrainData(BaseModel):
-    parameter: TrainDataSchema = Field(...)
-
-
-class TestDataSchema(BaseModel):
-    key: Optional[str]=None
-    pickup_datetime: Optional[datetime]=None
-    pickup_latitude: Optional[Decimal]=None
-    pickup_longitude: Optional[Decimal]=None
-    dropoff_latitude: Optional[Decimal]=None
-    dropoff_longitude: Optional[Decimal]=None
-    passenger_count: Optional[int]=None
-
-    class Config:
-        orm_mode = True
-
-
-class RequestTestData(BaseModel):
-    parameter: TestDataSchema = Field(...)
+class RequestRawData(BaseModel):
+    parameter: RawDataSchema = Field(...)
 
 
 class Response(GenericModel, Generic[T]):
