@@ -40,6 +40,15 @@ async def update_data(table: str, request: RequestRawData):
         raise HTTPException(400, detail=str(err))
     
 
+@raw_data_router.delete('/{table}')
+async def clear_data(table: str):
+    try:
+        await RawDataService.clear_data(table)
+        return Response(code=200, status='Ok', message=f"Table successfully cleared").dict(exclude_unset=True)
+    except Exception as err:
+        raise HTTPException(400, detail=str(err))
+
+
 @raw_data_router.delete('/{table}/{key}')
 async def delete_data(table: str, key: str):
     try:

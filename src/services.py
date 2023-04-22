@@ -99,3 +99,14 @@ class RawDataService:
             else:
                 raise Exception("Raw data table must be 'train' or 'test'")
             await session.commit()
+
+
+    async def clear_data(table: str) -> None:
+        async with async_session() as session:
+            if table == 'train':
+                await session.execute(delete(TrainData))
+            elif table == 'test':
+                await session.execute(delete(TestData))
+            else:
+                raise Exception("Raw data table must be 'train' or 'test'")
+            await session.commit()
