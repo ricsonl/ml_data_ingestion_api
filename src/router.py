@@ -8,7 +8,7 @@ raw_data_router = APIRouter(prefix='/raw')
 async def create_data(table: str, request: RequestRawData):
     try:
         await RawDataService.create_data(table, request.parameter)
-        return Response(code=200, status='Ok', message=f"Data successfully created in '{table}'").dict(exclude_unset=True)
+        return Response(code=200, status='Ok', message=f"Data successfully created").dict(exclude_unset=True)
     except Exception as err:
         raise HTTPException(400, detail=str(err))
     
@@ -35,7 +35,7 @@ async def get_data(table: str, key: str):
 async def update_data(table: str, request: RequestRawData):
     try:
         await RawDataService.update_data(table, request.parameter)
-        return Response(code=200, status='Ok', message=f"Data successfully updated in '{table}'").dict(exclude_unset=True)
+        return Response(code=200, status='Ok', message=f"Data successfully updated").dict(exclude_unset=True)
     except Exception as err:
         raise HTTPException(400, detail=str(err))
     
@@ -44,6 +44,6 @@ async def update_data(table: str, request: RequestRawData):
 async def delete_data(table: str, key: str):
     try:
         await RawDataService.delete_data(table, key)
-        return Response(code=200, status='Ok', message=f"Data successfully deleted in '{table}'").dict(exclude_unset=True)
+        return Response(code=200, status='Ok', message=f"Data successfully deleted").dict(exclude_unset=True)
     except Exception as err:
         raise HTTPException(400, detail=str(err))

@@ -55,6 +55,9 @@ class RawDataService:
     async def update_data(table: str, data: RawDataSchema) -> None:
         async with async_session() as session:
             if table == 'train':
+                result = await session.execute(select(TrainData).where(TrainData.key==data.key))
+                if not result.scalars().first():
+                    raise Exception(f"Register not found")
                 await session.execute(update(TrainData).where(TrainData.key==data.key)
                                                         .values(key=data.key,
                                                                 fare_amount=data.fare_amount,
@@ -65,6 +68,9 @@ class RawDataService:
                                                                 dropoff_longitude=data.dropoff_longitude,
                                                                 passenger_count=data.passenger_count))
             elif table == 'test':
+                result = await session.execute(select(TestData).where(TestData.key==data.key))
+                if not result.scalars().first():
+                    raise Exception(f"Register not found")
                 await session.execute(update(TestData).where(TestData.key==data.key)
                                                         .values(key=data.key,
                                                                 pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
@@ -81,8 +87,14 @@ class RawDataService:
     async def delete_data(table: str, key: str) -> None:
         async with async_session() as session:
             if table == 'train':
+                result = await session.execute(select(TrainData).where(TrainData.key==key))
+                if not result.scalars().first():
+                    raise Exception(f"Register not found")
                 await session.execute(delete(TrainData).where(TrainData.key==key))
             elif table == 'test':
+                result = await session.execute(select(TestData).where(TestData.key==key))
+                if not result.scalars().first():
+                    raise Exception(f"Register not found")
                 await session.execute(delete(TestData).where(TestData.key==key))
             else:
                 raise Exception("Raw data table must be 'train' or 'test'")
