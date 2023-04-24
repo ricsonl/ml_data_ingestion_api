@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from router import raw_data_router
+from router import router
 
 app = FastAPI()
 
@@ -7,4 +7,4 @@ app = FastAPI()
 async def Home():
     return "Welcome"
 
-app.include_router(router=raw_data_router)
+app.include_router(router=router)

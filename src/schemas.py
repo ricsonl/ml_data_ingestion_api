@@ -1,6 +1,5 @@
 from typing import Optional, Generic, TypeVar
 from decimal import Decimal
-from datetime import datetime
 from pydantic import BaseModel, Field
 from pydantic.generics import GenericModel
 
@@ -29,7 +28,7 @@ class RequestRawDataMassive(BaseModel):
 
 
 class Response(GenericModel, Generic[T]):
-    code: str
+    code: int
     status: str
     message: Optional[str]
     result: Optional[T]

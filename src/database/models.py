@@ -3,8 +3,8 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
-class TrainData(Base):
-    __tablename__ = 'train'
+class TrainRaw(Base):
+    __tablename__ = 'train_raw'
 
     key=Column(String, primary_key=True, autoincrement=False)
     fare_amount=Column(NUMERIC)
@@ -15,10 +15,11 @@ class TrainData(Base):
     dropoff_longitude=Column(NUMERIC)
     passenger_count=Column(Integer)
 
-class TestData(Base):
-    __tablename__ = 'test'
+class TestRaw(Base):
+    __tablename__ = 'test_raw'
 
     key=Column(String, primary_key=True, autoincrement=False)
+    fare_amount=Column(NUMERIC)
     pickup_datetime=Column(TIMESTAMP)
     pickup_latitude=Column(NUMERIC)
     pickup_longitude=Column(NUMERIC)
