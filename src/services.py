@@ -12,7 +12,7 @@ class RawDataService:
             if table == 'train':
                 _data = TrainData(key=data.key,
                                 fare_amount=data.fare_amount,
-                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                pickup_datetime=pd.to_datetime(data.pickup_datetime).replace(tzinfo=None),
                                 pickup_latitude=data.pickup_latitude,
                                 pickup_longitude=data.pickup_longitude,
                                 dropoff_latitude=data.dropoff_latitude,
@@ -20,7 +20,7 @@ class RawDataService:
                                 passenger_count=data.passenger_count)
             elif table == 'test':
                 _data = TestData(key=data.key,
-                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                pickup_datetime=pd.to_datetime(data.pickup_datetime).replace(tzinfo=None),
                                 pickup_latitude=data.pickup_latitude,
                                 pickup_longitude=data.pickup_longitude,
                                 dropoff_latitude=data.dropoff_latitude,
@@ -62,7 +62,7 @@ class RawDataService:
                 await session.execute(update(TrainData).where(TrainData.key==data.key)
                                                         .values(key=data.key,
                                                                 fare_amount=data.fare_amount,
-                                                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                                                pickup_datetime=pd.to_datetime(data.pickup_datetime).replace(tzinfo=None),
                                                                 pickup_latitude=data.pickup_latitude,
                                                                 pickup_longitude=data.pickup_longitude,
                                                                 dropoff_latitude=data.dropoff_latitude,
@@ -74,7 +74,7 @@ class RawDataService:
                     raise Exception(f"Register not found")
                 await session.execute(update(TestData).where(TestData.key==data.key)
                                                         .values(key=data.key,
-                                                                pickup_datetime=data.pickup_datetime.replace(tzinfo=None),
+                                                                pickup_datetime=pd.to_datetime(data.pickup_datetime).replace(tzinfo=None),
                                                                 pickup_latitude=data.pickup_latitude,
                                                                 pickup_longitude=data.pickup_longitude,
                                                                 dropoff_latitude=data.dropoff_latitude,
@@ -115,14 +115,26 @@ class RawDataService:
 
     async def load_data(table: str, path: str) -> None:
         _df = pd.read_parquet(path)
-        _df['pickup_datetime'] =  pd.to_datetime(_df['pickup_datetime'], infer_datetime_format=True)
+        _df['pickup_datetime'] =  pd.to_datetime(_df['pickup_datetime'])
         _df['pickup_datetime'] =  _df['pickup_datetime'].dt.tz_localize(None)
         _dict = _df.to_dict(orient='records')
         async with async_session() as session:
             if table == 'train':
-                await session.execute(TrainData.__table__.insert(), _dict)
+                buffer = []
+                for row in _dict:
+                    buffer.append(row)
+                    if len(buffer) % 10000 == 0:
+                        await session.execute(TrainData.__table__.insert(), buffer)
+                        buffer = []
+                await session.execute(TrainData.__table__.insert(), buffer)
             elif table == 'test':
-                await session.execute(TestData.__table__.insert(), _dict)
+                buffer = []
+                for row in _dict:
+                    buffer.append(row)
+                    if len(buffer) % 10000 == 0:
+                        await session.execute(TestData.__table__.insert(), buffer)
+                        buffer = []
+                await session.execute(TestData.__table__.insert(), buffer)
             else:
                 raise Exception("Raw data table must be 'train' or 'test'")
             await session.commit()

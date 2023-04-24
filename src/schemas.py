@@ -9,7 +9,7 @@ T = TypeVar('T')
 class RawDataSchema(BaseModel):
     key: Optional[str]=None
     fare_amount: Optional[Decimal]=None
-    pickup_datetime: Optional[datetime]=None
+    pickup_datetime: Optional[str]=None
     pickup_latitude: Optional[Decimal]=None
     pickup_longitude: Optional[Decimal]=None
     dropoff_latitude: Optional[Decimal]=None
