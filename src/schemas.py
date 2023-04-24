@@ -18,17 +18,12 @@ class RawDataSchema(BaseModel):
     class Config:
         orm_mode = True
 
-
 class RequestRawData(BaseModel):
     data: RawDataSchema = Field(...)
-
 
 class RequestRawDataMassive(BaseModel):
     path: str
 
-
 class Response(GenericModel, Generic[T]):
-    code: int
-    status: str
     message: Optional[str]
     result: Optional[T]

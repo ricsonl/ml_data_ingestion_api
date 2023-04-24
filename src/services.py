@@ -13,7 +13,7 @@ class RawDataService:
         elif table_name == 'test_raw':
             return TestRaw
         else:
-            raise Exception("Raw data table name must be 'train_raw' or 'test_raw'")
+            raise Exception("Raw data table name must be either 'train_raw' or 'test_raw'")
 
 
     async def create_data(table: Union[TrainRaw, TestRaw], data: RawDataSchema) -> None:
@@ -28,6 +28,7 @@ class RawDataService:
         async with async_session() as session:
             session.add(_data)
             await session.commit()
+
 
     async def list_data(table: Union[TrainRaw, TestRaw]) -> List[Any]:
         async with async_session() as session:
