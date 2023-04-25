@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, NUMERIC, String, TIMESTAMP
+from sqlalchemy import Column, Integer, NUMERIC, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -8,7 +8,7 @@ class TrainRaw(Base):
 
     key=Column(String, primary_key=True, autoincrement=False)
     fare_amount=Column(NUMERIC)
-    pickup_datetime=Column(TIMESTAMP)
+    pickup_datetime=Column(String)
     pickup_latitude=Column(NUMERIC)
     pickup_longitude=Column(NUMERIC)
     dropoff_latitude=Column(NUMERIC)
@@ -20,7 +20,7 @@ class TestRaw(Base):
 
     key=Column(String, primary_key=True, autoincrement=False)
     fare_amount=Column(NUMERIC)
-    pickup_datetime=Column(TIMESTAMP)
+    pickup_datetime=Column(String)
     pickup_latitude=Column(NUMERIC)
     pickup_longitude=Column(NUMERIC)
     dropoff_latitude=Column(NUMERIC)

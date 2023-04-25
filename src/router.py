@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, HTTPException
 from services import RawDataService
 from schemas import RequestRawData, RequestRawDataMassive, Response
@@ -24,11 +25,11 @@ async def load_data(table_name: str, request: RequestRawDataMassive):
         raise HTTPException(400, detail=str(err))
 
 
-@router.get('/{table_name}', status_code=200)
-async def list_data(table_name: str):
+@router.get('/{table_name}/', status_code=200)
+async def list_data(table_name: str, limit: Optional[int]=None):
     try:
         table = RawDataService.get_table(table_name)
-        result = await RawDataService.list_data(table)
+        result = await RawDataService.list_data(table, limit)
         return Response(result=result).dict(exclude_unset=True)
     except Exception as err:
         raise HTTPException(400, detail=str(err))

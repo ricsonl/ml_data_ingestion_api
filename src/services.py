@@ -1,10 +1,28 @@
-from typing import List, Union, Any
+from typing import List, Union, Optional, Any
 from database.models import TrainRaw, TestRaw
 from database.connection import async_session
 from schemas import RawDataSchema
 from sqlalchemy import delete, update
 from sqlalchemy.future import select
 import pandas as pd
+import pyarrow.parquet as pq
+import os
+import time
+
+
+def list_parquet_files(path: str) -> str:
+    for file in os.listdir(path):
+        if os.path.isfile(os.path.join(path, file)) and file.endswith('.parquet'):
+            yield file
+
+
+def date_validate(str: str) -> Optional[str]:
+    try:
+        pd.to_datetime(str)
+    except Exception as err:
+        raise err
+    return str
+
 
 class RawDataService:
     def get_table(table_name):
@@ -19,7 +37,7 @@ class RawDataService:
     async def create_data(table: Union[TrainRaw, TestRaw], data: RawDataSchema) -> None:
         _data = table(key=data.key,
                       fare_amount=data.fare_amount,
-                      pickup_datetime=pd.to_datetime(data.pickup_datetime).replace(tzinfo=None),
+                      pickup_datetime=date_validate(data.pickup_datetime),
                       pickup_latitude=data.pickup_latitude,
                       pickup_longitude=data.pickup_longitude,
                       dropoff_latitude=data.dropoff_latitude,
@@ -30,9 +48,9 @@ class RawDataService:
             await session.commit()
 
 
-    async def list_data(table: Union[TrainRaw, TestRaw]) -> List[Any]:
+    async def list_data(table: Union[TrainRaw, TestRaw], limit: Optional[int] = None) -> List[Any]:
         async with async_session() as session:
-            result = await session.execute(select(table))
+            result = await session.execute(select(table).limit(limit))
             return result.scalars().all()
         
 
@@ -47,7 +65,7 @@ class RawDataService:
             await session.execute(update(table).where(table.key==data.key)
                                                     .values(key=data.key,
                                                             fare_amount=data.fare_amount,
-                                                            pickup_datetime=pd.to_datetime(data.pickup_datetime).replace(tzinfo=None),
+                                                            pickup_datetime=date_validate(data.pickup_datetime),
                                                             pickup_latitude=data.pickup_latitude,
                                                             pickup_longitude=data.pickup_longitude,
                                                             dropoff_latitude=data.dropoff_latitude,
@@ -69,16 +87,12 @@ class RawDataService:
 
 
     async def load_data(table: Union[TrainRaw, TestRaw], path: str) -> None:
-        _df = pd.read_parquet(path)
-        _df['pickup_datetime'] =  pd.to_datetime(_df['pickup_datetime'])
-        _df['pickup_datetime'] =  _df['pickup_datetime'].dt.tz_localize(None)
-        _dict = _df.to_dict(orient='records')
         async with async_session() as session:
-            buffer = []
-            for row in _dict:
-                buffer.append(row)
-                if len(buffer) % 10000 == 0:
-                    await session.execute(table.__table__.insert(), buffer)
-                    buffer = []
-            await session.execute(table.__table__.insert(), buffer)
+            start_time = time.time()
+            for filename in list_parquet_files(path):
+                pq_part = pq.ParquetFile(os.path.join(path, filename))
+                for record in pq_part.iter_batches(batch_size=50000):
+                    dicts = record.to_pylist()
+                    await session.execute(table.__table__.insert(), dicts)
             await session.commit()
+            print(f'--- Took {time.time() - start_time} seconds ---')
