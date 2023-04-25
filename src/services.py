@@ -1,81 +1,68 @@
-from typing import List, Union, Optional, Any
+from typing import List, Any
 from schemas import RawDataSchema
-from sqlalchemy import delete, update
-from sqlalchemy.future import select
-import pandas as pd
 import pyarrow.parquet as pq
 import os
 import time
-# from datetime import datetime
-# from fastapi import Depends, HTTPException, status, APIRouter, Response
-# from pymongo.collection import ReturnDocument
-# from app import schemas
 from database import db
-from serializers.raw_data_serializers import raw_data_entity, raw_data_list_entity
-# from bson.objectid import ObjectId
-# from pymongo.errors import DuplicateKeyError
-from decimal import Decimal
-from bson.decimal128 import Decimal128
-
-
-def list_parquet_files(path: str) -> str:
-    for file in os.listdir(path):
-        if os.path.isfile(os.path.join(path, file)) and file.endswith('.parquet'):
-            yield file
-
-
-def convert_decimal(dict):
-    for i in range(0,len(dict.get('var'))):
-        dict['var'][i] = Decimal128(str(dict.get('var')[i]))
-    return dict
+from pymongo.errors import DuplicateKeyError, CollectionInvalid, WriteError, OperationFailure
+from serializers.raw_data_serializers import raw_data_list_entity
+from utils import list_parquet_files, convert_vars_decimal
+from pymongo.collection import ReturnDocument
 
 
 class RawDataService:
+    @staticmethod
+    def validate_collection_name(collection_name: str):
+        if collection_name not in db.list_collection_names():
+            raise CollectionInvalid(f"There is no collection named '{collection_name}'")
+
+    @staticmethod
     def create_data(collection_name: str, data: RawDataSchema) -> None:
-        db.get_collection(collection_name).insert_one(convert_decimal(data.dict()))
+        if RawDataService.get_data(collection_name, data.ID_code):
+            raise DuplicateKeyError(f"ID_code '{data.ID_code}' already exists in '{collection_name}' collection")
+        else:
+            db.get_collection(collection_name).insert_one(convert_vars_decimal(data.dict()))
 
 
-    def list_data(collection_name: str, limit: int) -> List[Any]:
+    @staticmethod
+    def list_data(collection_name: str, limit: int) -> List[ReturnDocument]:
         return raw_data_list_entity(db.get_collection(collection_name).find().limit(limit))
     
 
-    def get_data(collection_name: str, id_code: str) -> Any:
+    @staticmethod
+    def get_data(collection_name: str, id_code: str) -> ReturnDocument:
         return raw_data_list_entity(db.get_collection(collection_name).find({'ID_code': id_code}))
 
 
-    # async def list_data(table: Union[TrainRaw, TestRaw], limit: Optional[int] = None) -> List[Any]:
-    #     async with async_session() as session:
-    #         result = await session.execute(select(table).limit(limit))
-    #         return result.scalars().all()
-    
-    # async def list_data(table: Union[TrainRaw, TestRaw], limit: Optional[int] = None) -> List[Any]:
-    #     async with async_session() as session:
-    #         result = await session.execute(select(table).limit(limit))
-    #         return result.scalars().all()
-
+    @staticmethod
     def update_data(collection_name: str, data: RawDataSchema) -> None:
-        return db.get_collection(collection_name).replace_one({'ID_code': data.ID_code}, convert_decimal(data.dict()))
+        if RawDataService.get_data(collection_name, data.ID_code):
+            db.get_collection(collection_name).update_one({'ID_code': data.ID_code},  {"$set": convert_vars_decimal(data.dict())})
+        else:
+            raise WriteError(f"ID_code '{data.ID_code}' not found in '{collection_name}' collection")
 
 
-    # async def delete_data(table: Union[TrainRaw, TestRaw], key: str) -> None:
-    #     async with async_session() as session:
-    #         await session.execute(delete(table).where(table.key==key))
-    #         await session.commit()
+    @staticmethod
+    def delete_data(collection_name: str, id_code: str) -> None:
+        if RawDataService.get_data(collection_name, id_code):
+            db.get_collection(collection_name).delete_one({'ID_code': id_code})
+        else:
+            raise OperationFailure(f"ID_code '{id_code}' not found in '{collection_name}' collection")
 
 
-    # async def clear_data(table: Union[TrainRaw, TestRaw]) -> None:
-    #     async with async_session() as session:
-    #         await session.execute(delete(table))
-    #         await session.commit()
+    @staticmethod
+    def clear_collection(collection_name: str) -> None:
+        db.get_collection(collection_name).delete_many({})
 
 
-    # async def load_data(table: Union[TrainRaw, TestRaw], path: str) -> None:
-    #     async with async_session() as session:
-    #         start_time = time.time()
-    #         for filename in list_parquet_files(path):
-    #             pq_part = pq.ParquetFile(os.path.join(path, filename))
-    #             for record in pq_part.iter_batches(batch_size=50000):
-    #                 dicts = record.to_pylist()
-    #                 await session.execute(table.__table__.insert(), dicts)
-    #         await session.commit()
-    #         print(f'--- Took {time.time() - start_time} seconds ---')
+    @staticmethod
+    def load_data(collection_name: str, path: str) -> None:
+        start_time = time.time()
+        i = 0
+        for filename in list_parquet_files(path):
+            pq_part = pq.ParquetFile(os.path.join(path, filename))
+            for record in pq_part.iter_batches(batch_size=100000):
+                data = record.to_pylist()
+                i += len(data)
+                db.get_collection(collection_name).insert_many(record.to_pylist())
+        print(f'--- Took {time.time() - start_time} seconds to insert {i} rows ---')

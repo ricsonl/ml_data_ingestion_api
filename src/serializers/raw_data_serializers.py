@@ -1,12 +1,17 @@
-from typing import List
+from typing import List, Dict, Any
 from decimal import Decimal
 
-def raw_data_entity(data) -> dict:
-    return {
-        'ID_code': str(data['ID_code']),
-        'target': data['target'],
-        'var': list(map(lambda x: Decimal(str(x)), data['var']))
-    }
 
-def raw_data_list_entity(data) -> List:
+def raw_data_entity(data) -> Dict[str, Any]:
+    res = {
+        'ID_code': str(data['ID_code']),
+        'target': data['target']
+    }
+    for k in data:
+        if k.startswith('var_'):
+            res[k] = Decimal(str(data.get(k)))
+    return res
+
+
+def raw_data_list_entity(data) -> List[Dict[str, Any]]:
     return [raw_data_entity(reg) for reg in data]
