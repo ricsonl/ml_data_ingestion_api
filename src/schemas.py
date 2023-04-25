@@ -1,4 +1,4 @@
-from typing import Optional, Generic, TypeVar
+from typing import Optional, Generic, TypeVar, List
 from decimal import Decimal
 from pydantic import BaseModel, Field
 from pydantic.generics import GenericModel
@@ -6,14 +6,9 @@ from pydantic.generics import GenericModel
 T = TypeVar('T')
 
 class RawDataSchema(BaseModel):
-    key: Optional[str]=None
-    fare_amount: Optional[Decimal]=None
-    pickup_datetime: Optional[str]=None
-    pickup_latitude: Optional[Decimal]=None
-    pickup_longitude: Optional[Decimal]=None
-    dropoff_latitude: Optional[Decimal]=None
-    dropoff_longitude: Optional[Decimal]=None
-    passenger_count: Optional[int]=None
+    ID_code: str
+    target: Optional[str] = None
+    var: List[Decimal] = []
 
     class Config:
         orm_mode = True
