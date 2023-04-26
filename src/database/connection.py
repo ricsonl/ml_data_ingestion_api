@@ -2,6 +2,7 @@ import os
 from pymongo.mongo_client import MongoClient
 import pymongo
 from dotenv import load_dotenv
+
 load_dotenv()
 
 class Database:

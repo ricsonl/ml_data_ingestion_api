@@ -1,10 +1,10 @@
-from typing import List
-from schemas import RawDataSchema
-import pyarrow.parquet as pq
 import time
-from database import get_db
+from typing import List
+from schemas.raw import RawDataSchema
+import pyarrow.parquet as pq
+from database.connection import get_db
 from pymongo.errors import DuplicateKeyError, CollectionInvalid, WriteError, OperationFailure
-from serializers.raw_data_serializers import raw_data_list_entity
+from serializers.raw import raw_data_list_entity
 from pymongo.collection import ReturnDocument
 from pydantic import parse_obj_as
 

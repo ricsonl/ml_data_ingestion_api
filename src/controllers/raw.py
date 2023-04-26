@@ -1,11 +1,11 @@
 from typing import Optional
 from fastapi import APIRouter, HTTPException
-from services import RawDataService
-from schemas import RequestRawData, RequestRawDataMassive, Response
+from services.raw import RawDataService
+from schemas.raw import RequestRawData, RequestRawDataMassive, Response
 
-router = APIRouter(prefix='/{collection_name}')
+raw_data_router = APIRouter(prefix='/{collection_name}')
 
-@router.post('/', status_code=201)
+@raw_data_router.post('/', status_code=201)
 def create_data(collection_name: str, request: RequestRawData):
     try:
         RawDataService.validate_collection_name(collection_name)
@@ -15,7 +15,7 @@ def create_data(collection_name: str, request: RequestRawData):
         raise HTTPException(400, detail=str(err))
 
 
-@router.get('/', status_code=200)
+@raw_data_router.get('/', status_code=200)
 def list_data(collection_name: str, limit: Optional[int]=0):
     try:
         RawDataService.validate_collection_name(collection_name)
@@ -25,7 +25,7 @@ def list_data(collection_name: str, limit: Optional[int]=0):
         raise HTTPException(400, detail=str(err))
 
 
-@router.get('/{id_code}', status_code=200)
+@raw_data_router.get('/{id_code}', status_code=200)
 def get_data(collection_name: str, id_code: str):
     try:
         RawDataService.validate_collection_name(collection_name)
@@ -35,7 +35,7 @@ def get_data(collection_name: str, id_code: str):
         raise HTTPException(400, detail=str(err))
     
 
-@router.put('/', status_code=201)
+@raw_data_router.put('/', status_code=201)
 def update_data(collection_name: str, request: RequestRawData):
     try:
         RawDataService.validate_collection_name(collection_name)
@@ -45,7 +45,7 @@ def update_data(collection_name: str, request: RequestRawData):
         raise HTTPException(400, detail=str(err))
     
 
-@router.delete('/clear', status_code=200)
+@raw_data_router.delete('/clear', status_code=200)
 def clear_collection(collection_name: str):
     try:
         RawDataService.validate_collection_name(collection_name)
@@ -55,7 +55,7 @@ def clear_collection(collection_name: str):
         raise HTTPException(400, detail=str(err))
 
 
-@router.delete('/{id_code}', status_code=200)
+@raw_data_router.delete('/{id_code}', status_code=200)
 def delete_data(collection_name: str, id_code: str):
     try:
         RawDataService.validate_collection_name(collection_name)
@@ -65,7 +65,7 @@ def delete_data(collection_name: str, id_code: str):
         raise HTTPException(400, detail=str(err))
 
 
-@router.post('/massive', status_code=201)
+@raw_data_router.post('/massive', status_code=201)
 def load_data(collection_name: str, request: RequestRawDataMassive):
     try:
         RawDataService.validate_collection_name(collection_name)
