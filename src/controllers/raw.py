@@ -10,7 +10,7 @@ raw_data_router = APIRouter(prefix='/{collection_name}')
 def create_data(collection_name: str, request: RequestRawData):
     try:
         db = get_instance().db
-        RawDataService.validate_collection_name(collection_name)
+        RawDataService.validate_collection_name(db, collection_name)
         RawDataService.create_data(db, collection_name, request.data)
         return Response(message=f'Data successfully created').dict(exclude_unset=True)
     except Exception as err:
@@ -21,7 +21,7 @@ def create_data(collection_name: str, request: RequestRawData):
 def list_data(collection_name: str, limit: Optional[int]=0):
     try:
         db = get_instance().db
-        RawDataService.validate_collection_name(collection_name)
+        RawDataService.validate_collection_name(db, collection_name)
         result = RawDataService.list_data(db, collection_name, limit)
         return Response(result=result).dict(exclude_unset=True)
     except Exception as err:
@@ -32,7 +32,7 @@ def list_data(collection_name: str, limit: Optional[int]=0):
 def get_data(collection_name: str, id_code: str):
     try:
         db = get_instance().db
-        RawDataService.validate_collection_name(collection_name)
+        RawDataService.validate_collection_name(db, collection_name)
         result = RawDataService.get_data(db, collection_name, id_code)
         return Response(result=result).dict(exclude_unset=True)
     except Exception as err:
@@ -43,7 +43,7 @@ def get_data(collection_name: str, id_code: str):
 def update_data(collection_name: str, request: RequestRawData):
     try:
         db = get_instance().db
-        RawDataService.validate_collection_name(collection_name)
+        RawDataService.validate_collection_name(db, collection_name)
         RawDataService.update_data(db, collection_name, request.data)
         return Response(message='Data successfully updated').dict(exclude_unset=True)
     except Exception as err:
@@ -54,7 +54,7 @@ def update_data(collection_name: str, request: RequestRawData):
 def clear_collection(collection_name: str):
     try:
         db = get_instance().db
-        RawDataService.validate_collection_name(collection_name)
+        RawDataService.validate_collection_name(db, collection_name)
         RawDataService.clear_collection(db, collection_name)
         return Response(message='Collection successfully cleared').dict(exclude_unset=True)
     except Exception as err:
@@ -65,7 +65,7 @@ def clear_collection(collection_name: str):
 def delete_data(collection_name: str, id_code: str):
     try:
         db = get_instance().db
-        RawDataService.validate_collection_name(collection_name)
+        RawDataService.validate_collection_name(db, collection_name)
         RawDataService.delete_data(db, collection_name, id_code)
         return Response(message='Data successfully deleted').dict(exclude_unset=True)
     except Exception as err:
@@ -76,7 +76,7 @@ def delete_data(collection_name: str, id_code: str):
 def load_data(collection_name: str, request: RequestRawDataMassive):
     try:
         db = get_instance().db
-        RawDataService.validate_collection_name(collection_name)
+        RawDataService.validate_collection_name(db, collection_name)
         RawDataService.load_data(db, collection_name, request.path)
         return Response(message='Data successfully loaded').dict(exclude_unset=True)
     except Exception as err:

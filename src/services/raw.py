@@ -9,11 +9,12 @@ from pymongo.database import Database
 from schemas.raw import RawDataSchema
 from serializers.raw import raw_data_list_entity
 
+MAX_CHUNKSIZE = 10000
 
 class RawDataService:
     @staticmethod
-    def validate_collection_name(collection_name: str):
-        allowed_names = ['train_raw', 'test_raw']
+    def validate_collection_name(db: Database, collection_name: str):
+        allowed_names = db.list_collection_names()
         q = '\''
         if collection_name not in allowed_names:
             raise CollectionInvalid(f"'collection_name' must be {' or '.join([f'{q}{an}{q}' for an in allowed_names])}")
@@ -62,7 +63,7 @@ class RawDataService:
     def load_data(db: Database, collection_name: str, path: str) -> None:
         start_time = time.time()
         table: Table = pq.read_table(path)
-        for i, batch in enumerate(table.to_batches(max_chunksize=10000)):
+        for i, batch in enumerate(table.to_batches(max_chunksize=MAX_CHUNKSIZE)):
             batch_dict = batch.to_pylist()
             parse_obj_as(List[RawDataSchema], batch_dict)
             db.get_collection(collection_name).insert_many(batch_dict, ordered=False)

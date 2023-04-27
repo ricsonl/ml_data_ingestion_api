@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 def raw_data_entity(data) -> Dict[str, Any]:
     res = {}
     for k in data:
-        if k != '_id':
+        if k != '_id' and data.get(k) != None:
             res[k] = data.get(k)
     return res
 

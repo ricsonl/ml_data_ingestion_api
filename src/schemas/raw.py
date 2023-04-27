@@ -1,5 +1,5 @@
 from typing import Optional, Generic, TypeVar
-from pydantic import BaseModel, Field, Extra, root_validator 
+from pydantic import BaseModel, StrictStr, StrictInt, Extra, Field, root_validator 
 from pydantic.generics import GenericModel
 import numbers
 
@@ -7,8 +7,8 @@ T = TypeVar('T')
 MAX_VARS = 200
 
 class RawDataSchema(BaseModel):
-    ID_code: Optional[str] = None
-    target: Optional[int] = None
+    ID_code: Optional[StrictStr] = None
+    target: Optional[StrictInt] = None
 
     @root_validator(pre=True)
     def validate_values(cls, values):
