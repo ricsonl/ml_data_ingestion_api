@@ -4,4 +4,5 @@ venv/
 **/db_data
 **/csv_data
 **/parquet_data
+**/.pytest_cache
 csv_to_parquet.py
