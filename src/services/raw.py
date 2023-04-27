@@ -9,7 +9,7 @@ from pymongo.database import Database
 from schemas.raw import RawDataSchema
 from serializers.raw import raw_data_list_entity
 
-MAX_CHUNKSIZE = 10000
+MAX_CHUNKSIZE = 50000
 
 class RawDataService:
     @staticmethod
