@@ -10,7 +10,7 @@ load_dotenv()
 class MongoManager:
     class __MongoManager:
         client: MongoClient[Any] = MongoClient(os.getenv('DATABASE_URL'))
-        db: Database[Any] = client[os.getenv('MONGO_INITDB_DATABASE') or '']
+        db: Database[Any] = client[os.getenv('MONGO_INITDB_DATABASE') or 'mongo_db']
 
     __instance = None
 
