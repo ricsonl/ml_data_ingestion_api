@@ -5,7 +5,6 @@ import pyarrow.parquet as pq
 from pyarrow import Table
 from pymongo.errors import DuplicateKeyError, CollectionInvalid, WriteError, OperationFailure
 from pymongo.typings import _DocumentType
-from pymongo.collection import ReturnDocument
 from pymongo.database import Database
 from schemas.raw import RawDataSchema
 from serializers.raw import raw_data_list_entity

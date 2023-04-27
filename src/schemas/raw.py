@@ -7,7 +7,7 @@ T = TypeVar('T')
 MAX_VARS = 200
 
 class RawDataSchema(BaseModel):
-    ID_code: StrictStr = None
+    ID_code: StrictStr
     target: Optional[StrictInt] = None
 
     @root_validator(pre=True)
