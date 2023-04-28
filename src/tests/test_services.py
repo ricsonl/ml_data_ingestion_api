@@ -35,11 +35,18 @@ def test_raw_create_data_valid_input(insert_one):
         "ID_code": "fake_id",
         "var_0": 1, 
         "var_1": 1.3,
-        "target": 0
+        "target": None
     })
+    function_argument_expected = {
+        "ID_code": "fake_id",
+        "var_0": 1, 
+        "var_1": 1.3,
+        "target": None
+    }
     RawDataService.create_data(client.db, collection_name, data)
     
     assert 1 == insert_one.call_count
+    assert function_argument_expected == insert_one.call_args.args[0]
 
 
 @mock.patch('mongomock.collection.Collection.insert_one')
@@ -140,11 +147,23 @@ def test_raw_update_data_existing_id(update_one):
         "ID_code": "fake_id",
         "var_0": 2, 
         "var_1": 2.3,
-        "target": 1
+        "target": None
     })
+
+    function_argument_1_expected = {"ID_code": "fake_id"}
+    function_argument_2_expected = {
+        '$set': {
+            "ID_code": "fake_id",
+            "var_0": 2, 
+            "var_1": 2.3,
+            "target": None
+        }
+    }
     RawDataService.update_data(client.db, collection_name, new_data)
 
     assert 1 == update_one.call_count
+    assert function_argument_1_expected == update_one.call_args.args[0]
+    assert function_argument_2_expected == update_one.call_args.args[1]
 
 
 @mock.patch('mongomock.collection.Collection.update_one')
@@ -178,12 +197,19 @@ def test_raw_delete_data_existing(delete_one):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     
-    data = {"ID_code": "fake_id"}
+    data = {
+        "ID_code": "fake_id",
+        "var_0": 1, 
+        "var_1": 1.3,
+        "target": 0
+    }
     client.db.get_collection(collection_name).insert_one(data)
 
+    function_argument_expected = {'ID_code': 'fake_id'}
     RawDataService.delete_data(client.db, collection_name, 'fake_id')
 
     assert 1 == delete_one.call_count
+    assert function_argument_expected == delete_one.call_args.args[0]
 
 
 @mock.patch('mongomock.collection.Collection.delete_one')
@@ -208,6 +234,7 @@ def test_raw_clear_data(create_collection, drop):
 
     assert 1 == drop.call_count
     assert 1 == create_collection.call_count
+    assert collection_name == create_collection.call_args.args[0]
 
 
 @mock.patch('services.raw.MAX_CHUNKSIZE', 2)
@@ -222,23 +249,18 @@ def test_raw_load_data(insert_many, read_table, time):
         {'ID_code': 'fake_id_1', 'target': 1},
         {'ID_code': 'fake_id_2', 'target': 1},
         {'ID_code': 'fake_id_3', 'target': 1},
-        {'ID_code': 'fake_id_4', 'target': 1},
-        {'ID_code': 'fake_id_5', 'target': 1},
-        {'ID_code': 'fake_id_6', 'target': 1},
-        {'ID_code': 'fake_id_7', 'target': 1},
-        {'ID_code': 'fake_id_8', 'target': 1},
-        {'ID_code': 'fake_id_9', 'target': 0},
-        {'ID_code': 'fake_id_10', 'target': 0},
-        {'ID_code': 'fake_id_11', 'target': 0},
-        {'ID_code': 'fake_id_12', 'target': 0},
-        {'ID_code': 'fake_id_13', 'target': 0},
-        {'ID_code': 'fake_id_14', 'target': 0},
-        {'ID_code': 'fake_id_15', 'target': 0},
+        {'ID_code': 'fake_id_4', 'target': 0},
+        {'ID_code': 'fake_id_5', 'target': 0}
     ])
     read_table.return_value = pa_table
 
+    batchs_inserted_expected = [
+        [{'ID_code': 'fake_id_1', 'target': 1},{'ID_code': 'fake_id_2', 'target': 1}],
+        [{'ID_code': 'fake_id_3', 'target': 1},{'ID_code': 'fake_id_4', 'target': 0}],
+        [{'ID_code': 'fake_id_5', 'target': 0}],
+    ]
     RawDataService.load_data(client.db, collection_name, path)
     
-    assert 8 == insert_many.call_count
-    for call in insert_many.call_args_list:
-        assert len(call.args[0]) <= 2
+    assert 3 == insert_many.call_count
+    for i, call in enumerate(insert_many.call_args_list):
+        assert batchs_inserted_expected[i] == call.args[0]
