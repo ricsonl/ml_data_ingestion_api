@@ -27,7 +27,8 @@ DATABASE_URL=mongodb://<any_username>:<any_password>@localhost:6000/fastapi?auth
 ```
 
 ### Create database
-[Install docker-compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
+- Install [docker-compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)  
+- run:
 ```
 docker-compose up -d
 ```
