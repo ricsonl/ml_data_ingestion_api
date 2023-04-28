@@ -1,7 +1,8 @@
 from typing import Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, status
 from services.raw import RawDataService
-from schemas.raw import RequestRawData, RequestRawDataMassive, Response
+from schemas.common import Response
+from schemas.raw import RequestRawData, RequestRawDataMassive
 from database.connection import MongoManager
 
 raw_data_router = APIRouter(prefix='/{collection_name}')

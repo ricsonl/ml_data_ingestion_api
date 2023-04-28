@@ -1,9 +1,7 @@
-from typing import Dict, Any, Optional, Generic, TypeVar
+from typing import Dict, Any, Optional
 from pydantic import BaseModel, StrictStr, StrictInt, Extra, Field, root_validator 
-from pydantic.generics import GenericModel
 import numbers
 
-T = TypeVar('T')
 MAX_VARS = 200
 
 class RawDataSchema(BaseModel):
@@ -38,7 +36,3 @@ class RequestRawData(BaseModel):
 
 class RequestRawDataMassive(BaseModel):
     path: str
-
-class Response(GenericModel, Generic[T]):
-    message: Optional[str]
-    result: Optional[T]

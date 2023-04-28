@@ -3,28 +3,22 @@ from typing import Optional, List, Any, Dict
 from pydantic import parse_obj_as
 import pyarrow.parquet as pq
 from pyarrow import Table
-from pymongo.errors import DuplicateKeyError, CollectionInvalid, WriteError, OperationFailure
+from pymongo.errors import DuplicateKeyError, WriteError, OperationFailure
 from pymongo.typings import _DocumentType
 from pymongo.database import Database
+from services.base import BaseService
 from schemas.raw import RawDataSchema
 from serializers.raw import raw_data_list_entity
 
 MAX_CHUNKSIZE = 50000
 
-class RawDataService:
-    @staticmethod
-    def validate_collection_name(db: Database[_DocumentType], collection_name: str) -> None:
-        allowed_names = db.list_collection_names()
-        q = '\''
-        if collection_name not in allowed_names:
-            raise CollectionInvalid(f"'collection_name' must be {' or '.join([f'{q}{an}{q}' for an in allowed_names])}")
-
+class RawDataService(BaseService):
     @staticmethod
     def create_data(db: Database[_DocumentType], collection_name: str, data: RawDataSchema) -> None:
         if RawDataService.get_data(db, collection_name, data.ID_code):
             raise DuplicateKeyError(f"ID_code '{data.ID_code}' already exists in '{collection_name}' collection")
         else:
-            db.get_collection(collection_name).insert_one(data.dict()) # type: ignore
+            db.get_collection(collection_name).insert_one(data.dict(exclude_unset=True)) # type: ignore
 
 
     @staticmethod
@@ -40,7 +34,7 @@ class RawDataService:
     @staticmethod
     def update_data(db: Database[_DocumentType], collection_name: str, data: RawDataSchema) -> None:
         if RawDataService.get_data(db, collection_name, data.ID_code):
-            db.get_collection(collection_name).update_one({'ID_code': data.ID_code},  {"$set": data.dict()})
+            db.get_collection(collection_name).update_one({'ID_code': data.ID_code},  {"$set": data.dict(exclude_unset=True)})
         else:
             raise WriteError(f"ID_code '{data.ID_code}' not found in '{collection_name}' collection")
 

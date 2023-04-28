@@ -3,25 +3,26 @@ from unittest import mock
 import pyarrow
 from pymongo.errors import DuplicateKeyError, CollectionInvalid, WriteError, OperationFailure
 import mongomock
+from services.base import BaseService
 from services.raw import RawDataService
 from schemas.raw import RawDataSchema
 from serializers.raw import raw_data_list_entity
 
 @mock.patch('mongomock.database.Database.list_collection_names')
-def test_raw_validate_collection_name_valid_name(list_collection_names):
+def test_base_validate_collection_name_valid_name(list_collection_names):
     list_collection_names.return_value = ['c_1', 'c_2']
     client = mongomock.MongoClient()
 
-    RawDataService.validate_collection_name(client.db, 'c_1')
+    BaseService.validate_collection_name(client.db, 'c_1')
 
 
 @mock.patch('mongomock.database.Database.list_collection_names')
-def test_raw_validate_collection_name_invalid_name(list_collection_names):
+def test_base_validate_collection_name_invalid_name(list_collection_names):
     list_collection_names.return_value = ['c_1', 'c_2']
     client = mongomock.MongoClient()
 
     with pytest.raises(CollectionInvalid) as err:
-        RawDataService.validate_collection_name(client.db, 'c_3')
+        BaseService.validate_collection_name(client.db, 'c_3')
     assert str(err.value) == "'collection_name' must be 'c_1' or 'c_2'"
 
 
