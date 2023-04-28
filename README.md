@@ -54,7 +54,8 @@ Some field restrictions for any creation route (POST, PUT):
 ```
 POST http://localhost:8000/train_raw
 
-body: {
+-- Body:
+{
   "data": {
     "ID_code": "test_id_1",
     "target": 1,
@@ -63,9 +64,8 @@ body: {
     "var_2": 0.5
   }
 }
-```
-Expected response (201)
-```
+
+-- Expected response (201):
 { "message": "Data successfully created" }
 ```
 
@@ -73,12 +73,12 @@ Expected response (201)
 ```
 POST http://localhost:8000/train_raw/massive
 
-body: {
+-- Body:
+{
   "path": "path/to/folder"
 }
-```
-Expected response (201)
-```
+
+-- Expected response (201):
 { "message": "Collection successfully loaded" }
 ```
 
@@ -86,7 +86,8 @@ Expected response (201)
 ```
 PUT http://localhost:8000/train_raw
 
-body: {
+-- Body:
+{
   "data": {
     "ID_code": "test_id_1",
     "target": 0,
@@ -95,18 +96,16 @@ body: {
     "var_2": 1.5
   }
 }
-```
-Expected response (201)
-```
+
+-- Expected response (201):
 { "message": "Data successfully updated" }
 ```
 
 ### List registers
 ```
 GET http://localhost:8000/train_raw/?limit=2
-```
-Expected response (200)
-```
+
+-- Expected response (200):
 {
   "result": [
     {
@@ -128,9 +127,8 @@ Expected response (200)
 ### Get specific register
 ```
 GET http://localhost:8000/train_raw/test_id_1
-```
-Expected response (200)
-```
+
+-- Expected response (200):
 {
   "result": [
     {
@@ -146,17 +144,15 @@ Expected response (200)
 ### Delete specific register
 ```
 DELETE http://localhost:8000/train_raw/test_id_1
-```
-Expected response (200)
-```
+
+-- Expected response (200):
 { "message": "Data successfully deleted" }
 ```
 
 ### Clear all registers
 ```
 DELETE http://localhost:8000/train_raw/clear
-```
-Expected response (200)
-```
+
+-- Expected response (200):
 { "message": "Collection successfully cleared" }
 ```
