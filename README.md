@@ -23,7 +23,7 @@ Create a `.env` file with the following variables
 MONGO_INITDB_ROOT_USERNAME=<username>
 MONGO_INITDB_ROOT_PASSWORD=<any_password>
 MONGO_INITDB_DATABASE=<any_database_name>
-DATABASE_URL=mongodb://<username>:<password>@localhost:6000/fastapi?authSource=<username>
+DATABASE_URL=mongodb://<username>:<password>@localhost:6000/fastapi?authSource=admin
 ```
 
 ### Create database
