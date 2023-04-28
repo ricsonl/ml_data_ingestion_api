@@ -3,7 +3,6 @@ venv/
 **/__pycache__
 **/db_data
 **/csv_data
-**/parquet_data
 **/.pytest_cache
 **/.mypy_cache
 csv_to_parquet.py
