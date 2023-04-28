@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status
 from typing import Dict, Any
-from schemas.raw import Response
+from schemas.common import Response
 from controllers.raw import raw_data_router
 
 app = FastAPI()

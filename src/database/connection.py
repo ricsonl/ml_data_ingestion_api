@@ -19,6 +19,7 @@ class MongoManager:
             MongoManager.__instance = MongoManager.__MongoManager()
             TrainRaw = getattr(MongoManager.__instance.db, 'train_raw')
             TestRaw = getattr(MongoManager.__instance.db, 'test_raw')
+
             TrainRaw.create_index([("ID_code", pymongo.ASCENDING)], unique=True)
             TestRaw.create_index([("ID_code", pymongo.ASCENDING)], unique=True)
 
