@@ -8,7 +8,7 @@ from schemas.raw import RawDataSchema
 from serializers.raw import raw_data_list_entity
 
 @mock.patch('mongomock.database.Database.list_collection_names')
-def test_validate_collection_name_valid_name(list_collection_names):
+def test_raw_validate_collection_name_valid_name(list_collection_names):
     list_collection_names.return_value = ['c_1', 'c_2']
     client = mongomock.MongoClient()
 
@@ -16,7 +16,7 @@ def test_validate_collection_name_valid_name(list_collection_names):
 
 
 @mock.patch('mongomock.database.Database.list_collection_names')
-def test_validate_collection_name_invalid_name(list_collection_names):
+def test_raw_validate_collection_name_invalid_name(list_collection_names):
     list_collection_names.return_value = ['c_1', 'c_2']
     client = mongomock.MongoClient()
 
@@ -26,7 +26,7 @@ def test_validate_collection_name_invalid_name(list_collection_names):
 
 
 @mock.patch('mongomock.collection.Collection.insert_one')
-def test_create_data_valid_input(insert_one):
+def test_raw_create_data_valid_input(insert_one):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     
@@ -42,7 +42,7 @@ def test_create_data_valid_input(insert_one):
 
 
 @mock.patch('mongomock.collection.Collection.insert_one')
-def test_create_data_duplicate_key(insert_one):
+def test_raw_create_data_duplicate_key(insert_one):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
 
@@ -57,7 +57,7 @@ def test_create_data_duplicate_key(insert_one):
     assert str(err.value) == "ID_code 'fake_id' already exists in 'c_1' collection"
 
 
-def test_list_data_no_limit():
+def test_raw_list_data_no_limit():
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     
@@ -76,7 +76,7 @@ def test_list_data_no_limit():
     assert result_expected==result
 
 
-def test_list_data_limit():
+def test_raw_list_data_limit():
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     
@@ -94,7 +94,7 @@ def test_list_data_limit():
     assert result_expected==result
 
 
-def test_get_data_existing():
+def test_raw_get_data_existing():
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     
@@ -108,7 +108,7 @@ def test_get_data_existing():
     assert result_expected==result
 
 
-def test_get_data_nonexistent():
+def test_raw_get_data_nonexistent():
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     
@@ -123,7 +123,7 @@ def test_get_data_nonexistent():
 
 
 @mock.patch('mongomock.collection.Collection.update_one')
-def test_update_data_existing_id(update_one):
+def test_raw_update_data_existing_id(update_one):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
 
@@ -147,7 +147,7 @@ def test_update_data_existing_id(update_one):
 
 
 @mock.patch('mongomock.collection.Collection.update_one')
-def test_update_data_nonexistent_id(update_one):
+def test_raw_update_data_nonexistent_id(update_one):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
 
@@ -173,7 +173,7 @@ def test_update_data_nonexistent_id(update_one):
 
 
 @mock.patch('mongomock.collection.Collection.delete_one')
-def test_delete_data_existing(delete_one):
+def test_raw_delete_data_existing(delete_one):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     
@@ -186,7 +186,7 @@ def test_delete_data_existing(delete_one):
 
 
 @mock.patch('mongomock.collection.Collection.delete_one')
-def test_delete_data_nonexistent(delete_one):
+def test_raw_delete_data_nonexistent(delete_one):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
 
@@ -199,7 +199,7 @@ def test_delete_data_nonexistent(delete_one):
 
 @mock.patch('mongomock.collection.Collection.drop')
 @mock.patch('mongomock.database.Database.create_collection')
-def test_clear_data(create_collection, drop):
+def test_raw_clear_data(create_collection, drop):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
 
@@ -213,7 +213,7 @@ def test_clear_data(create_collection, drop):
 @mock.patch('time.time')
 @mock.patch('pyarrow.parquet.read_table')
 @mock.patch('mongomock.collection.Collection.insert_many')
-def test_load_data(insert_many, read_table, time):
+def test_raw_load_data(insert_many, read_table, time):
     client = mongomock.MongoClient()
     collection_name = 'c_1'
     path = 'test/path'
@@ -239,3 +239,5 @@ def test_load_data(insert_many, read_table, time):
     RawDataService.load_data(client.db, collection_name, path)
     
     assert 8 == insert_many.call_count
+    for call in insert_many.call_args_list:
+        assert len(call.args[0]) <= 2
