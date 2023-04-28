@@ -79,7 +79,7 @@ POST http://localhost:8000/train_raw/massive
 }
 
 -- Expected response (201):
-{ "message": "Collection successfully loaded" }
+{ "message": "Data successfully loaded" }
 ```
 
 ### Update register
