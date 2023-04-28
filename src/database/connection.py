@@ -19,13 +19,9 @@ class MongoManager:
             MongoManager.__instance = MongoManager.__MongoManager()
             TrainRaw = getattr(MongoManager.__instance.db, 'train_raw')
             TestRaw = getattr(MongoManager.__instance.db, 'test_raw')
-            TrainStats = getattr(MongoManager.__instance.db, 'train_stats')
-            TestStats = getattr(MongoManager.__instance.db, 'test_stats')
 
             TrainRaw.create_index([("ID_code", pymongo.ASCENDING)], unique=True)
             TestRaw.create_index([("ID_code", pymongo.ASCENDING)], unique=True)
-            TrainStats.create_index([("field_name", pymongo.ASCENDING)], unique=True)
-            TestStats.create_index([("field_name", pymongo.ASCENDING)], unique=True)
 
     def __getattr__(self, item: str) -> Any:
         return getattr(self.__instance, item)
