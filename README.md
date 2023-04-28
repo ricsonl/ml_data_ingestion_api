@@ -39,12 +39,6 @@ cd src/
 uvicorn main:app --reload
 ```
 
-### Update README test coverage badge
-```
-export PYTHONPATH=$PWD/src/
-python3 -m pytest -vv --cov=src/ --cov-report xml:coverage.xml
-readme-cov
-```
 ## Routes
 The path must have at least the name of the target MongoDB collection (could be the table name if we are using SQL databases). On database startup, two collections are created: `train_raw` and `test_raw`, which corresponds to the `train.csv` and `test.csv` [files](https://www.kaggle.com/competitions/santander-customer-transaction-prediction/data). The api doesn't allow creation of new collections.
 Some field restrictions for any creation route (POST, PUT):
@@ -157,4 +151,11 @@ DELETE http://localhost:8000/train_raw/clear
 
 -- Expected response (200):
 { "message": "Collection successfully cleared" }
+```
+
+## Update README test coverage badge
+```
+export PYTHONPATH=$PWD/src/
+python3 -m pytest -vv --cov=src/ --cov-report xml:coverage.xml
+readme-cov
 ```
