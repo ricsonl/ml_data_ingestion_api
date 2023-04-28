@@ -7,4 +7,5 @@ export MYPYPATH=..
 python3 -m mypy --strict -m src.main
 
 python3 -m pytest tests/test_services.py
+python3 -m pytest tests/test_controllers.py
 python3 -m pytest tests/test_serializers.py

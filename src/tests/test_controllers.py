@@ -16,8 +16,9 @@ def test_health_check():
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.create_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_create_data_ok(__getattr__, create_data, validate_collection_name):
+def test_raw_create_data_ok(__getattr__, MongoManager, create_data, validate_collection_name):
     collection_name = 'c_1'
     body = {
         "data": {"ID_code": "test"}
@@ -34,8 +35,9 @@ def test_raw_create_data_ok(__getattr__, create_data, validate_collection_name):
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.create_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_create_data_validate_collection_name_failed(__getattr__, create_data, validate_collection_name):
+def test_raw_create_data_validate_collection_name_failed(__getattr__, MongoManager, create_data, validate_collection_name):
     error_message = 'message'
     validate_collection_name.side_effect = CollectionInvalid(error_message)
 
@@ -54,8 +56,9 @@ def test_raw_create_data_validate_collection_name_failed(__getattr__, create_dat
     
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.list_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_list_data_ok(__getattr__, list_data, validate_collection_name):
+def test_raw_list_data_ok(__getattr__, MongoManager, list_data, validate_collection_name):
     result = [{'some': 'data'}]
     list_data.return_value = result
 
@@ -72,8 +75,9 @@ def test_raw_list_data_ok(__getattr__, list_data, validate_collection_name):
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.list_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_list_data_with_limit(__getattr__, list_data, validate_collection_name):
+def test_raw_list_data_with_limit(__getattr__, MongoManager, list_data, validate_collection_name):
     result = [{'some': 'data'}]
     list_data.return_value = result
 
@@ -92,8 +96,9 @@ def test_raw_list_data_with_limit(__getattr__, list_data, validate_collection_na
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.list_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_list_data_validate_collection_name_failed(__getattr__, list_data, validate_collection_name):
+def test_raw_list_data_validate_collection_name_failed(__getattr__, MongoManager, list_data, validate_collection_name):
     error_message = 'message'
     validate_collection_name.side_effect = CollectionInvalid(error_message)
 
@@ -109,8 +114,9 @@ def test_raw_list_data_validate_collection_name_failed(__getattr__, list_data, v
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.get_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_get_data_ok(__getattr__, get_data, validate_collection_name):
+def test_raw_get_data_ok(__getattr__, MongoManager, get_data, validate_collection_name):
     result = {'some': 'data'}
     get_data.return_value = result
 
@@ -129,8 +135,9 @@ def test_raw_get_data_ok(__getattr__, get_data, validate_collection_name):
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.get_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_get_data_validate_collection_name_failed(__getattr__, get_data, validate_collection_name):
+def test_raw_get_data_validate_collection_name_failed(__getattr__, MongoManager, get_data, validate_collection_name):
     error_message = 'message'
     validate_collection_name.side_effect = CollectionInvalid(error_message)
 
@@ -147,8 +154,9 @@ def test_raw_get_data_validate_collection_name_failed(__getattr__, get_data, val
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.update_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_update_data_ok(__getattr__, update_data, validate_collection_name):
+def test_raw_update_data_ok(__getattr__, MongoManager, update_data, validate_collection_name):
     collection_name = 'c_1'
     body = {
         "data": {"ID_code": "test"}
@@ -165,8 +173,9 @@ def test_raw_update_data_ok(__getattr__, update_data, validate_collection_name):
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.update_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_update_data_validate_collection_name_failed(__getattr__, update_data, validate_collection_name):
+def test_raw_update_data_validate_collection_name_failed(__getattr__, MongoManager, update_data, validate_collection_name):
     error_message = 'message'
     validate_collection_name.side_effect = CollectionInvalid(error_message)
 
@@ -185,8 +194,9 @@ def test_raw_update_data_validate_collection_name_failed(__getattr__, update_dat
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.clear_collection')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_clear_collection_ok(__getattr__, clear_collection, validate_collection_name):
+def test_raw_clear_collection_ok(__getattr__, MongoManager, clear_collection, validate_collection_name):
     collection_name = 'c_1'
     response_expected = {'message': 'Collection successfully cleared'}
     response = fastapi_client.delete(f'/{collection_name}/clear')
@@ -200,8 +210,9 @@ def test_raw_clear_collection_ok(__getattr__, clear_collection, validate_collect
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.clear_collection')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_clear_collection_validate_collection_name_failed(__getattr__, clear_collection, validate_collection_name):
+def test_raw_clear_collection_validate_collection_name_failed(__getattr__, MongoManager, clear_collection, validate_collection_name):
     error_message = 'message'
     validate_collection_name.side_effect = CollectionInvalid(error_message)
 
@@ -217,8 +228,9 @@ def test_raw_clear_collection_validate_collection_name_failed(__getattr__, clear
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.delete_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_delete_data_ok(__getattr__, delete_data, validate_collection_name):
+def test_raw_delete_data_ok(__getattr__, MongoManager, delete_data, validate_collection_name):
     collection_name = 'c_1'
     id = 'id_1'
     response_expected = {'message': 'Data successfully deleted'}
@@ -234,8 +246,9 @@ def test_raw_delete_data_ok(__getattr__, delete_data, validate_collection_name):
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.delete_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_delete_data_validate_collection_name_failed(__getattr__, delete_data, validate_collection_name):
+def test_raw_delete_data_validate_collection_name_failed(__getattr__, MongoManager, delete_data, validate_collection_name):
     error_message = 'message'
     validate_collection_name.side_effect = CollectionInvalid(error_message)
 
@@ -252,8 +265,9 @@ def test_raw_delete_data_validate_collection_name_failed(__getattr__, delete_dat
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.load_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_load_data_ok(__getattr__, load_data, validate_collection_name):
+def test_raw_load_data_ok(__getattr__, MongoManager, load_data, validate_collection_name):
     collection_name = 'c_1'
     body = {
         "path": "some/path"
@@ -270,8 +284,9 @@ def test_raw_load_data_ok(__getattr__, load_data, validate_collection_name):
 
 @mock.patch('services.raw.RawDataService.validate_collection_name')
 @mock.patch('services.raw.RawDataService.load_data')
+@mock.patch('database.connection.MongoManager')
 @mock.patch('database.connection.MongoManager.__getattr__')
-def test_raw_load_data_validate_collection_name_failed(__getattr__, load_data, validate_collection_name):
+def test_raw_load_data_validate_collection_name_failed(__getattr__, MongoManager, load_data, validate_collection_name):
     error_message = 'message'
     validate_collection_name.side_effect = CollectionInvalid(error_message)
 

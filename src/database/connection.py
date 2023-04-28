@@ -1,7 +1,6 @@
 import os
 from typing import Any
 from pymongo.mongo_client import MongoClient
-from pymongo.database import Database
 import pymongo
 from dotenv import load_dotenv
 
@@ -9,8 +8,9 @@ load_dotenv()
 
 class MongoManager:
     class __MongoManager:
-        client: MongoClient[Any] = MongoClient(os.getenv('DATABASE_URL'))
-        db: Database[Any] = client[os.getenv('MONGO_INITDB_DATABASE') or 'mongo_db']
+        def __init__(self) -> None:
+            self.client: MongoClient[Any] = MongoClient(os.getenv('DATABASE_URL'))
+            self.db = self.client[os.getenv('MONGO_INITDB_DATABASE') or 'mongo']
 
     __instance = None
 
