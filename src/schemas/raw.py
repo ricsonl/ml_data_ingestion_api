@@ -7,7 +7,7 @@ T = TypeVar('T')
 MAX_VARS = 200
 
 class RawDataSchema(BaseModel):
-    ID_code: StrictStr
+    ID_code: Optional[StrictStr] = None
     target: Optional[StrictInt] = None
 
     @root_validator(pre=True)
@@ -22,7 +22,7 @@ class RawDataSchema(BaseModel):
                     raise ValueError(f"'{key}' must be 0 or 1")
             if key.startswith('var_'):
                 val = values.get(key)
-                if not isinstance(val, numbers.Number):
+                if val != None and not isinstance(val, numbers.Number):
                     raise ValueError(f"'{key}' must be numeric")
                 vars_count += 1
         if vars_count > MAX_VARS:

@@ -1,5 +1,5 @@
 import time
-from typing import List, Any, Dict
+from typing import Optional, List, Any, Dict
 from pydantic import parse_obj_as
 import pyarrow.parquet as pq
 from pyarrow import Table
@@ -33,7 +33,7 @@ class RawDataService:
     
 
     @staticmethod
-    def get_data(db: Database[_DocumentType], collection_name: str, id_code: str) -> List[Dict[str, Any]]:
+    def get_data(db: Database[_DocumentType], collection_name: str, id_code: Optional[str]) -> List[Dict[str, Any]]:
         return raw_data_list_entity(db.get_collection(collection_name).find({'ID_code': id_code}))
 
 
