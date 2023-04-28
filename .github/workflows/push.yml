@@ -9,11 +9,5 @@ jobs:
     - uses: actions/checkout@main
     - name: install dependencies
       run: sudo -H pip3 install -r requirements.txt
-    - name: install docker-compose
-      run: |
-        set -x
-        VER="1.29.2"
-        sudo curl -L -o /tmp/docker-compose "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)"
-        sudo mv /tmp/* /usr/bin
     - name: run type checking and tests
       run: deploy/ci.sh
